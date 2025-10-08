@@ -23,32 +23,33 @@
             background-color: var(--color-light);
             padding: 0;
             margin: 0;
-            scroll-snap-type: y mandatory;
+            /* Menghapus scroll-snap dan menyembunyikan overflow untuk mencegah scrolling */
+            overflow: hidden; 
         }
 
         /* Slide Container Style (Simulating presentation slides with 16:9 ratio) */
         .slide-section {
-            min-height: 100vh;
-            padding: 4rem 2rem;
-            position: relative;
-            overflow: hidden;
-            scroll-snap-align: start;
-            /* Membatasi slide ke rasio 16:9 yang terpusat */
-            max-width: 1280px; 
-            min-height: 720px;
-            margin: 0 auto;
+            /* Mengatur ukuran slide agar pas dengan viewport horizontal */
+            width: 100vw;
+            height: 100vh;
+            padding: 4rem 5%; /* Padding horizontal disesuaikan */
+            position: absolute; /* Diubah untuk animasi fade */
+            top: 0;
+            left: 0;
+            overflow: hidden; /* Tetap hidden untuk konten slide */
             /* Memastikan konten terpusat di tengah layar vertikal dan horizontal */
             display: flex; 
             flex-direction: column;
             justify-content: center;
+            flex-shrink: 0; /* Mencegah slide menyusut */
+            opacity: 0; /* Sembunyikan slide secara default */
+            transition: opacity 0.6s ease-in; /* Animasi fade */
+            z-index: 5; /* Atur z-index dasar */
         }
 
-        /* Override body style for wide screens to avoid stretching */
-        @media (min-width: 1300px) {
-            body {
-                background-color: #333; /* Darker background outside 16:9 frame */
-            }
-        }
+        /* Menghapus override body style karena slide sekarang selalu full-width */
+        /* @media (min-width: 1300px) { ... } */
+        
         
         /* Custom Geometric Shapes for Decoration */
         .shape {
@@ -79,6 +80,18 @@
             from { transform: scale(1) rotate(0deg); opacity: 0.8; }
             to { transform: scale(1.1) rotate(5deg); opacity: 1; }
         }
+
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-15px); }
+            100% { transform: translateY(0px); }
+        }
+
+        @keyframes spin-slow {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
 
         /* Custom Card Styles for Light/Dark Context */
         .card-dark {
@@ -145,289 +158,337 @@
         .slide-light .header-logo-container {
             background-color: white; /* Light BG for contrast */
         }
+
+        /* Slideshow Container */
+        #slideshow-container {
+            position: relative; /* Diperlukan untuk menampung slide absolute */
+            height: 100vh;
+        }
+
+        /* Class untuk slide yang aktif/terlihat */
+        .slide-section.active-slide {
+            opacity: 1;
+            z-index: 10; /* Pastikan slide aktif di atas yang lain */
+        }
+
+        /* Navigation Buttons */
+        .slide-nav-btn {
+            position: fixed;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 30; /* Di atas segalanya */
+            background-color: rgba(23, 23, 26, 0.5); /* var(--color-dark) with opacity */
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 3rem;
+            height: 3rem;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: background-color 0.2s;
+        }
+        .slide-nav-btn:hover {
+            background-color: var(--color-primary);
+        }
         
     </style>
 </head>
-<body class="snap-y snap-mandatory">
+<body>
 
-    <!-- Slide 1: Cover/Header (Dark Background) -->
-    <div class="slide-section slide-dark flex flex-col justify-center items-center" style="background-color: var(--color-dark); color: var(--color-light);">
-        
-        <!-- HEADER LOGOS -->
-        <div class="header-logo-container">
-            <div class="flex items-center space-x-4">
-                 <img src="https://admin.academy.timedoor.net/assets/img/logo/timedoor-academy-2022-black-green.png" 
-                     alt="Logo Timedoor Academy" 
-                     class="h-8 bg-white p-1 rounded-md">
-                <!-- X removed -->
-                <img src="https://sudinpendidikanjb1.weebly.com/uploads/1/5/1/6/151627025/logo-sudin-2_orig.png" 
-                     alt="Logo Dinas Pendidikan Jakarta Barat" 
-                     class="h-8 bg-white p-1 rounded-md">
-            </div>
-            <p class="text-sm font-semibold" style="color: var(--color-primary);">OJT SESI 2</p>
-        </div>
-
-        <!-- DECORATIONS -->
-        <div class="shape shape-star-dark" style="top: 8%; right: 8%;"></div>
-        <div class="shape" style="bottom: 10%; left: 10%; width: 150px; height: 150px; border: 3px solid var(--color-secondary); border-radius: 50%; opacity: 0.6; transform: rotate(-10deg);"></div>
-        <div class="shape" style="top: 20%; left: 5%; width: 60px; height: 60px; background-color: var(--color-primary); border-radius: 0.75rem; transform: rotate(30deg); opacity: 0.4;"></div>
-        <div class="shape" style="bottom: 5%; right: 25%; width: 10px; height: 80px; background-color: var(--color-accent); transform: rotate(-60deg);"></div>
-        
-        <!-- CONTENT -->
-        <h1 class="text-6xl md:text-8xl font-black text-center mb-4 z-10 uppercase tracking-tight" style="color: var(--color-primary);">
-            OJT SESI 2
-        </h1>
-        <p class="text-2xl md:text-4xl font-light text-center mb-10 z-10 italic" style="color: var(--color-secondary);">
-            Diskusi Hasil Open Class & Rencana Aksi
-        </p>
-    </div>
-
-    <!-- Slide 2: Agenda (Light Background) -->
-    <div class="slide-section slide-light" style="background-color: var(--color-light);">
-        <!-- HEADER LOGOS -->
-         <div class="header-logo-container">
-            <div class="flex items-center space-x-4">
-                 <img src="https://admin.academy.timedoor.net/assets/img/logo/timedoor-academy-2022-black-green.png" 
-                     alt="Logo Timedoor Academy" 
-                     class="h-8 bg-gray-100 p-1 rounded-md">
-                <!-- X removed -->
-                <img src="https://sudinpendidikanjb1.weebly.com/uploads/1/5/1/6/151627025/logo-sudin-2_orig.png" 
-                     alt="Logo Dinas Pendidikan Jakarta Barat" 
-                     class="h-8 bg-gray-100 p-1 rounded-md">
-            </div>
-            <p class="text-sm font-semibold" style="color: var(--color-dark);">AGENDA</p>
-        </div>
-
-        <!-- DECORATIONS -->
-        <div class="shape shape-wave" style="border-color: var(--color-secondary); top: 5%; right: 5%;"></div>
-        <div class="shape" style="bottom: 10%; right: 10%; width: 10px; height: 100px; background-color: var(--color-accent); transform: rotate(45deg); opacity: 0.7;"></div>
-        <div class="shape" style="top: 80%; left: 2%; width: 40px; height: 40px; background-color: var(--color-secondary); border-radius: 50%; opacity: 0.5;"></div>
-        <div class="shape" style="top: 30%; left: 20%; width: 120px; height: 5px; background-color: var(--color-primary); transform: rotate(-5deg); opacity: 0.3;"></div>
-
-        <!-- CONTENT -->
-        <h2 class="text-4xl font-black mb-8 z-10" style="color: var(--color-dark); margin-top: 5rem;">
-            AGENDA HARI INI
-        </h2>
-
-        <div class="overflow-x-auto card-light shadow-xl z-10 w-full">
-            <table class="min-w-full divide-y divide-gray-200">
-                <thead class="bg-gray-100">
-                    <tr>
-                        <th class="px-4 py-3 text-left text-sm font-extrabold uppercase tracking-wider w-1/5 text-gray-600">Waktu</th>
-                        <th class="px-4 py-3 text-left text-sm font-extrabold uppercase tracking-wider w-3/5 text-gray-600">Kegiatan</th>
-                        <th class="px-4 py-3 text-center text-sm font-extrabold uppercase tracking-wider w-1/5 text-gray-600">Durasi</th>
-                    </tr>
-                </thead>
-                <tbody class="bg-white divide-y divide-gray-100">
-                    <tr><td class="px-4 py-3 text-sm font-medium text-gray-900">08.00 - 08.30</td><td class="px-4 py-3 text-sm text-gray-700">Registrasi Peserta</td><td class="px-4 py-3 text-center text-sm text-gray-700">30'</td></tr>
-                    <tr><td class="px-4 py-3 text-sm font-medium text-gray-900">08.30 - 09.00</td><td class="px-4 py-3 text-sm text-gray-700">Pembukaan</td><td class="px-4 py-3 text-center text-sm text-gray-700">30'</td></tr>
-                    <tr class="bg-red-50"><td class="px-4 py-3 text-sm font-extrabold text-red-700">09.00 - 10.00</td><td class="px-4 py-3 text-sm font-extrabold text-red-700">Sesi A: Identifikasi Masalah & Analisis <span class="text-red-900">Weakness</span> dan <span class="text-red-900">Problem</span></td><td class="px-4 py-3 text-center text-sm font-extrabold text-red-700">60'</td></tr>
-                    <tr class="bg-green-50"><td class="px-4 py-3 text-sm font-extrabold text-green-700">10.00 - 11.00</td><td class="px-4 py-3 text-sm font-extrabold text-green-700">Sesi A: Analisis Solusi, <span class="text-green-900">Strength</span> dan <span class="text-green-900">Opportunity</span></td><td class="px-4 py-3 text-center text-sm font-extrabold text-green-700">60'</td></tr>
-                    <tr><td class="px-4 py-3 text-sm font-medium text-gray-900">11.00 - 12.00</td><td class="px-4 py-3 text-sm text-gray-700">Sesi A: Pembuatan Materi Presentasi (PPT)</td><td class="px-4 py-3 text-center text-sm text-gray-700">60'</td></tr>
-                    <tr><td class="px-4 py-3 text-sm font-medium text-gray-900">12.00 - 13.00</td><td class="px-4 py-3 text-sm text-gray-700">ISHOMA</td><td class="px-4 py-3 text-center text-sm text-gray-700">60'</td></tr>
-                    <tr><td class="px-4 py-3 text-sm font-medium text-gray-900">13.30 - 15.30</td><td class="px-4 py-3 text-sm text-gray-700">Sesi B: Presentasi dan Diskusi</td><td class="px-4 py-3 text-center text-sm text-gray-700">120'</td></tr>
-                    <tr><td class="px-4 py-3 text-sm font-medium text-gray-900">15.30 - 16.00</td><td class="px-4 py-3 text-sm text-gray-700">Penutupan</td><td class="px-4 py-3 text-center text-sm text-gray-700">30'</td></tr>
-                </tbody>
-            </table>
-        </div>
-    </div>
-
-    <!-- Slide 3: Analisis Masalah (Dark Background) -->
-    <div class="slide-section slide-dark" style="background-color: var(--color-dark); color: var(--color-light);">
-        <!-- HEADER LOGOS -->
-         <div class="header-logo-container">
-            <div class="flex items-center space-x-4">
-                 <img src="https://admin.academy.timedoor.net/assets/img/logo/timedoor-academy-2022-black-green.png" 
-                     alt="Logo Timedoor Academy" 
-                     class="h-8 bg-white p-1 rounded-md">
-                <!-- X removed -->
-                <img src="https://sudinpendidikanjb1.weebly.com/uploads/1/5/1/6/151627025/logo-sudin-2_orig.png" 
-                     alt="Logo Dinas Pendidikan Jakarta Barat" 
-                     class="h-8 bg-white p-1 rounded-md">
-            </div>
-            <p class="text-sm font-semibold" style="color: var(--color-light);">MASALAH</p>
-        </div>
-
-        <!-- DECORATIONS -->
-        <div class="shape shape-star-dark" style="background-color: var(--color-secondary); top: 15%; left: 15%; opacity: 0.9; width: 100px; height: 100px;"></div>
-        <div class="shape" style="bottom: 5%; right: 5%; width: 100px; height: 100px; border: 4px dashed var(--color-primary); border-radius: 50%; opacity: 0.5; transform: rotate(15deg);"></div>
-        <div class="shape" style="top: 50%; right: 25%; width: 15px; height: 100px; background-color: var(--color-accent); transform: rotate(65deg);"></div>
-
-        <!-- CONTENT -->
-        <h2 class="text-4xl font-black mb-2 uppercase z-10" style="color: var(--color-primary); margin-top: 5rem;">
-            Sesi A - Masalah
-        </h2>
-        <h3 class="text-xl font-light mb-8 italic z-10" style="color: var(--color-accent);">
-            Identifikasi: Weakness, Problem, & Threats
-        </h3>
-        
-        <!-- Accordion/Topik Diskusi -->
-        <div id="problem-accordion" class="space-y-3 z-10 w-full max-w-xl self-center"> 
-            <!-- Topik A - D -->
-            <div data-problem-title="Efektivitas Pembelajaran" data-content-id="content-a">
-                <div class="accordion-header p-4 font-extrabold flex justify-between items-center rounded-t-lg transition duration-300" style="background-color: var(--color-primary); color: var(--color-dark);">
-                    <span>a. Efektivitas Pembelajaran</span>
-                    <span class="transform transition-transform duration-300 font-bold text-xl text-white">+</span>
-                </div>
-                <div id="content-a" class="accordion-content">
-                    <p class="font-bold text-lg mb-2" style="color: var(--color-primary);">Analisis Weakness & Problem:</p>
-                    <ul class="list-disc list-inside ml-4 text-gray-700 space-y-1">
-                        <li>**Weakness:** Kelemahan dalam penyampaian materi atau struktur kegiatan belajar.</li>
-                        <li>**Problem:** Kurikulum terlalu padat, waktu terbatas, atau metode yang kurang relevan.</li>
-                    </ul>
-                    <p class="font-bold text-lg mt-4 mb-2" style="color: var(--color-secondary);">Potensi Threats & Solusi Awal:</p>
-                    <ul class="list-disc list-inside ml-4 text-gray-700 space-y-1">
-                        <li>**Threats:** Perubahan kebijakan mendadak atau keterbatasan sarana prasarana.</li>
-                        <li>**Solusi:** Prioritas materi esensial dan adopsi strategi diferensiasi.</li>
-                    </ul>
-                </div>
-            </div>
-             <div data-problem-title="Keterlibatan Siswa" data-content-id="content-b">
-                <div class="accordion-header p-4 font-extrabold flex justify-between items-center rounded-lg transition duration-300" style="background-color: var(--color-dark); color: var(--color-light);">
-                    <span>b. Keterlibatan Siswa</span>
-                    <span class="transform transition-transform duration-300 font-bold text-xl" style="color: var(--color-primary);">+</span>
-                </div>
-                <div id="content-b" class="accordion-content">
-                    <p class="font-bold text-lg mb-2" style="color: var(--color-primary);">Analisis Weakness & Problem:</p>
-                    <ul class="list-disc list-inside ml-4 text-gray-700 space-y-1">
-                        <li>**Weakness:** Siswa pasif, kurang motivasi, atau hanya terlibat pada kelompok tertentu.</li>
-                        <li>**Problem:** Kurangnya variasi aktivitas yang menstimulasi semua gaya belajar.</li>
-                    </ul>
-                    <p class="font-bold text-lg mt-4 mb-2" style="color: var(--color-secondary);">Potensi Threats & Solusi Awal:</p>
-                    <ul class="list-disc list-inside ml-4 text-gray-700 space-y-1">
-                        <li>**Threats:** Gangguan sosial di kelas atau pengaruh negatif lingkungan luar.</li>
-                        <li>**Solusi:** Integrasi elemen gamifikasi atau penggunaan alat interaktif digital.</li>
-                    </ul>
-                </div>
-            </div>
-            <div data-problem-title="Penggunaan Media/Sumber Belajar" data-content-id="content-c">
-                <div class="accordion-header p-4 font-extrabold flex justify-between items-center rounded-lg transition duration-300" style="background-color: var(--color-dark); color: var(--color-light);">
-                    <span>c. Penggunaan Media/Sumber Belajar</span>
-                    <span class="transform transition-transform duration-300 font-bold text-xl" style="color: var(--color-primary);">+</span>
-                </div>
-                <div id="content-c" class="accordion-content">
-                    <p class="font-bold text-lg mb-2" style="color: var(--color-primary);">Analisis Weakness & Problem:</p>
-                    <ul class="list-disc list-inside ml-4 text-gray-700 space-y-1">
-                        <li>**Weakness:** Media yang digunakan sudah usang atau kurang menarik.</li>
-                        <li>**Problem:** Keterbatasan akses internet atau peralatan teknologi.</li>
-                    </ul>
-                    <p class="font-bold text-lg mt-4 mb-2" style="color: var(--color-secondary);">Potensi Threats & Solusi Awal:</p>
-                    <ul class="list-disc list-inside ml-4 text-gray-700 space-y-1">
-                        <li>**Threats:** Kerusakan alat atau biaya pengadaan media baru yang tinggi.</li>
-                        <li>**Solusi:** Membuat media ajar sederhana berbasis bahan lokal.</li>
-                    </ul>
-                </div>
-            </div>
-             <div data-problem-title="Pencapaian Tujuan Pembelajaran" data-content-id="content-d">
-                <div class="accordion-header p-4 font-extrabold flex justify-between items-center rounded-lg transition duration-300" style="background-color: var(--color-dark); color: var(--color-light);">
-                    <span>d. Pencapaian Tujuan Pembelajaran</span>
-                    <span class="transform transition-transform duration-300 font-bold text-xl" style="color: var(--color-primary);">+</span>
-                </div>
-                <div id="content-d" class="accordion-content">
-                    <p class="font-bold text-lg mb-2" style="color: var(--color-primary);">Analisis Weakness & Problem:</p>
-                    <ul class="list-disc list-inside ml-4 text-gray-700 space-y-1">
-                        <li>**Weakness:** Perumusan tujuan yang kurang spesifik atau tidak terukur.</li>
-                        <li>**Problem:** Tujuan pembelajaran yang tidak tercapai secara merata.</li>
-                    </ul>
-                    <p class="font-bold text-lg mt-4 mb-2" style="color: var(--color-secondary);">Potensi Threats & Solusi Awal:</p>
-                    <ul class="list-disc list-inside ml-4 text-gray-700 space-y-1">
-                        <li>**Threats:** Penilaian yang bias.</li>
-                        <li>**Solusi:** Gunakan kerangka SMART dalam merumuskan tujuan.</li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Slide 4: Analisis Solusi (Light Background) -->
-    <div class="slide-section slide-light" style="background-color: var(--color-light);">
-        <!-- HEADER LOGOS -->
-         <div class="header-logo-container">
-            <div class="flex items-center space-x-4">
-                 <img src="https://admin.academy.timedoor.net/assets/img/logo/timedoor-academy-2022-black-green.png" 
-                     alt="Logo Timedoor Academy" 
-                     class="h-8 bg-gray-100 p-1 rounded-md">
-                <!-- X removed -->
-                <img src="https://sudinpendidikanjb1.weebly.com/uploads/1/5/1/6/151627025/logo-sudin-2_orig.png" 
-                     alt="Logo Dinas Pendidikan Jakarta Barat" 
-                     class="h-8 bg-gray-100 p-1 rounded-md">
-            </div>
-            <p class="text-sm font-semibold" style="color: var(--color-dark);">SOLUSI & AKSI</p>
-        </div>
-
-        <!-- DECORATIONS -->
-        <div class="shape shape-wave" style="border-color: var(--color-primary); bottom: 10%; right: 10%; transform: rotate(-25deg);"></div>
-        <div class="shape shape-star-dark" style="background-color: var(--color-primary); top: 5%; right: 5%; width: 60px; height: 60px; opacity: 0.5;"></div>
-        <div class="shape" style="top: 60%; left: 0%; width: 100px; height: 10px; background-color: var(--color-accent); transform: rotate(10deg); opacity: 0.6;"></div>
-        <div class="shape" style="top: 25%; left: 50%; width: 50px; height: 50px; border: 3px solid var(--color-secondary); border-radius: 0.5rem; transform: rotate(-30deg); opacity: 0.8;"></div>
-        
-        <!-- CONTENT -->
-        <h2 class="text-4xl font-black mb-2 uppercase z-10" style="color: var(--color-dark); margin-top: 5rem;">
-            Analisis Solusi
-        </h2>
-        <h3 class="text-xl font-light mb-12 italic text-gray-600 z-10">
-            Strength, Opportunity & Action Plan
-        </h3>
-
-        <div class="grid md:grid-cols-2 gap-8 z-10 w-full">
-            <div class="p-6 rounded-xl border-4 border-dashed" style="border-color: var(--color-primary); background-color: var(--color-primary); color: white;">
-                <h4 class="font-black text-3xl mb-4 uppercase" style="color: var(--color-accent);">Strength & Opportunity</h4>
-                <ul class="list-disc list-inside ml-4 space-y-3 text-lg">
-                    <li>**Strength (Kekuatan):** Keahlian unik guru, dukungan komunitas sekolah, kemampuan adaptasi teknologi.</li>
-                    <li>**Opportunity (Peluang):** Memanfaatkan <span class="font-bold">platform belajar online gratis</span>, dukungan pemerintah daerah, tren pembelajaran berbasis proyek.</li>
-                </ul>
-            </div>
+<div id="slideshow-container">
+        <!-- Slide 1: Cover/Header (Dark Background) -->
+        <div class="slide-section slide-dark flex flex-col justify-center items-center" style="background-color: var(--color-dark); color: var(--color-light);">
             
-            <div class="p-6 rounded-xl border-4 border-dashed" style="border-color: var(--color-secondary); background-color: white;">
-                <h4 class="font-black text-3xl mb-4 uppercase" style="color: var(--color-secondary);">Action Plan</h4>
-                <p class="mb-4 text-gray-700">Merumuskan solusi konkret yang memanfaatkan Strength untuk menangkap Opportunity dalam mengatasi Weakness.</p>
-                <div class="space-y-3">
-                    <div class="flex items-start">
-                        <span class="text-2xl font-black mr-3" style="color: var(--color-accent);">1.</span>
-                        <p class="text-gray-800"><span class="font-bold">Diferensiasi Materi:</span> Membuat 3 versi tugas untuk mengakomodasi level siswa (Rendah, Sedang, Tinggi).</p>
+            <!-- HEADER LOGOS -->
+            <div class="header-logo-container">
+                <div class="flex items-center space-x-4">
+                     <img src="https://admin.academy.timedoor.net/assets/img/logo/timedoor-academy-2022-black-green.png" 
+                         alt="Logo Timedoor Academy" 
+                         class="h-8 bg-white p-1 rounded-md">
+                    <!-- X removed -->
+                    <img src="https://sudinpendidikanjb1.weebly.com/uploads/1/5/1/6/151627025/logo-sudin-2_orig.png" 
+                         alt="Logo Dinas Pendidikan Jakarta Barat" 
+                         class="h-8 bg-white p-1 rounded-md">
+                </div>
+                <p class="text-sm font-semibold" style="color: var(--color-primary);">OJT SESI 2</p>
+            </div>
+
+            <!-- DECORATIONS -->
+            <div class="shape shape-star-dark" style="top: 8%; right: 8%;"></div>
+            <div class="shape" style="bottom: 10%; left: 10%; width: 150px; height: 150px; border: 3px solid var(--color-secondary); border-radius: 50%; opacity: 0.6; animation: spin-slow 25s linear infinite alternate;"></div>
+            <div class="shape" style="top: 20%; left: 5%; width: 60px; height: 60px; background-color: var(--color-primary); border-radius: 0.75rem; transform: rotate(30deg); opacity: 0.4; animation: float 6s ease-in-out infinite;"></div>
+            <div class="shape" style="bottom: 5%; right: 25%; width: 10px; height: 80px; background-color: var(--color-accent); transform: rotate(-60deg); animation: float 8s ease-in-out infinite alternate;"></div>
+            
+            <!-- CONTENT -->
+            <h1 class="text-6xl md:text-8xl font-black text-center mb-4 z-10 uppercase tracking-tight" style="color: var(--color-primary);">
+                OJT SESI 2
+            </h1>
+            <p class="text-2xl md:text-4xl font-light text-center mb-10 z-10 italic" style="color: var(--color-secondary);">
+                Diskusi Hasil Open Class & Rencana Aksi
+            </p>
+        </div>
+
+        <!-- Slide 2: Agenda (Light Background) -->
+        <div class="slide-section slide-light" style="background-color: var(--color-light);">
+            <!-- HEADER LOGOS -->
+             <div class="header-logo-container">
+                <div class="flex items-center space-x-4">
+                     <img src="https://admin.academy.timedoor.net/assets/img/logo/timedoor-academy-2022-black-green.png" 
+                         alt="Logo Timedoor Academy" 
+                         class="h-8 bg-gray-100 p-1 rounded-md">
+                    <!-- X removed -->
+                    <img src="https://sudinpendidikanjb1.weebly.com/uploads/1/5/1/6/151627025/logo-sudin-2_orig.png" 
+                         alt="Logo Dinas Pendidikan Jakarta Barat" 
+                         class="h-8 bg-gray-100 p-1 rounded-md">
+                </div>
+                <p class="text-sm font-semibold" style="color: var(--color-dark);">AGENDA</p>
+            </div>
+
+            <!-- DECORATIONS -->
+            <div class="shape shape-wave" style="border-color: var(--color-secondary); top: 5%; right: 5%;"></div>
+            <div class="shape" style="bottom: 10%; right: 10%; width: 10px; height: 100px; background-color: var(--color-accent); transform: rotate(45deg); opacity: 0.7; animation: float 7s ease-in-out infinite;"></div>
+            <div class="shape" style="top: 80%; left: 2%; width: 40px; height: 40px; background-color: var(--color-secondary); border-radius: 50%; opacity: 0.5; animation: float 5s ease-in-out infinite alternate;"></div>
+            <div class="shape" style="top: 30%; left: 20%; width: 120px; height: 5px; background-color: var(--color-primary); transform: rotate(-5deg); opacity: 0.3; animation: float 9s ease-in-out infinite;"></div>
+
+            <!-- CONTENT -->
+            <h2 class="text-4xl font-black mb-8 z-10 text-center" style="color: var(--color-dark); margin-top: 5rem;">
+                AGENDA HARI INI
+            </h2>
+
+            <div class="overflow-x-auto card-light shadow-xl z-10 w-full max-w-4xl mx-auto">
+                <table class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-gray-100">
+                        <tr>
+                            <th class="px-4 py-3 text-left text-sm font-extrabold uppercase tracking-wider w-1/5 text-gray-600">Waktu</th>
+                            <th class="px-4 py-3 text-left text-sm font-extrabold uppercase tracking-wider w-3/5 text-gray-600">Kegiatan</th>
+                            <th class="px-4 py-3 text-center text-sm font-extrabold uppercase tracking-wider w-1/5 text-gray-600">Durasi</th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white divide-y divide-gray-100">
+                        <tr><td class="px-4 py-3 text-sm font-medium text-gray-900">08.00 - 08.30</td><td class="px-4 py-3 text-sm text-gray-700">Registrasi Peserta</td><td class="px-4 py-3 text-center text-sm text-gray-700">30'</td></tr>
+                        <tr><td class="px-4 py-3 text-sm font-medium text-gray-900">08.30 - 09.00</td><td class="px-4 py-3 text-sm text-gray-700">Pembukaan</td><td class="px-4 py-3 text-center text-sm text-gray-700">30'</td></tr>
+                        <tr class="bg-red-50"><td class="px-4 py-3 text-sm font-extrabold text-red-700">09.00 - 10.00</td><td class="px-4 py-3 text-sm font-extrabold text-red-700">Sesi A: Identifikasi Masalah & Analisis <span class="text-red-900">Weakness</span> dan <span class="text-red-900">Problem</span></td><td class="px-4 py-3 text-center text-sm font-extrabold text-red-700">60'</td></tr>
+                        <tr class="bg-green-50"><td class="px-4 py-3 text-sm font-extrabold text-green-700">10.00 - 11.00</td><td class="px-4 py-3 text-sm font-extrabold text-green-700">Sesi A: Analisis Solusi, <span class="text-green-900">Strength</span> dan <span class="text-green-900">Opportunity</span></td><td class="px-4 py-3 text-center text-sm font-extrabold text-green-700">60'</td></tr>
+                        <tr><td class="px-4 py-3 text-sm font-medium text-gray-900">11.00 - 12.00</td><td class="px-4 py-3 text-sm text-gray-700">Sesi A: Pembuatan Materi Presentasi (PPT)</td><td class="px-4 py-3 text-center text-sm text-gray-700">60'</td></tr>
+                        <tr><td class="px-4 py-3 text-sm font-medium text-gray-900">12.00 - 13.00</td><td class="px-4 py-3 text-sm text-gray-700">ISHOMA</td><td class="px-4 py-3 text-center text-sm text-gray-700">60'</td></tr>
+                        <tr><td class="px-4 py-3 text-sm font-medium text-gray-900">13.30 - 15.30</td><td class="px-4 py-3 text-sm text-gray-700">Sesi B: Presentasi dan Diskusi</td><td class="px-4 py-3 text-center text-sm text-gray-700">120'</td></tr>
+                        <tr><td class="px-4 py-3 text-sm font-medium text-gray-900">15.30 - 16.00</td><td class="px-4 py-3 text-sm text-gray-700">Penutupan</td><td class="px-4 py-3 text-center text-sm text-gray-700">30'</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Slide 3: Analisis Masalah (Dark Background) -->
+        <div class="slide-section slide-dark" style="background-color: var(--color-dark); color: var(--color-light);">
+            <!-- HEADER LOGOS -->
+             <div class="header-logo-container">
+                <div class="flex items-center space-x-4">
+                     <img src="https://admin.academy.timedoor.net/assets/img/logo/timedoor-academy-2022-black-green.png" 
+                         alt="Logo Timedoor Academy" 
+                         class="h-8 bg-white p-1 rounded-md">
+                    <!-- X removed -->
+                    <img src="https://sudinpendidikanjb1.weebly.com/uploads/1/5/1/6/151627025/logo-sudin-2_orig.png" 
+                         alt="Logo Dinas Pendidikan Jakarta Barat" 
+                         class="h-8 bg-white p-1 rounded-md">
+                </div>
+                <p class="text-sm font-semibold" style="color: var(--color-light);">MASALAH</p>
+            </div>
+
+            <!-- DECORATIONS -->
+            <div class="shape shape-star-dark" style="background-color: var(--color-secondary); top: 15%; left: 15%; opacity: 0.9; width: 100px; height: 100px;"></div>
+            <div class="shape" style="bottom: 5%; right: 5%; width: 100px; height: 100px; border: 4px dashed var(--color-primary); border-radius: 50%; opacity: 0.5; animation: spin-slow 20s linear infinite;"></div>
+            <div class="shape" style="top: 50%; right: 25%; width: 15px; height: 100px; background-color: var(--color-accent); transform: rotate(65deg); animation: float 6s ease-in-out infinite;"></div>
+
+            <!-- CONTENT -->
+            <h2 class="text-4xl font-black mb-2 uppercase z-10" style="color: var(--color-primary); margin-top: 5rem;">
+                Sesi A - Masalah
+            </h2>
+            <h3 class="text-xl font-light mb-8 italic z-10" style="color: var(--color-accent);">
+                Identifikasi: Weakness, Problem, & Threats
+            </h3>
+            
+            <!-- Accordion/Topik Diskusi -->
+            <div id="problem-accordion" class="space-y-3 z-10 w-full max-w-xl self-center"> 
+                <!-- Topik A - D -->
+                <div data-problem-title="Efektivitas Pembelajaran" data-content-id="content-a">
+                    <div class="accordion-header p-4 font-extrabold flex justify-between items-center rounded-t-lg transition duration-300" style="background-color: var(--color-primary); color: var(--color-dark);">
+                        <span>a. Efektivitas Pembelajaran</span>
+                        <span class="transform transition-transform duration-300 font-bold text-xl text-white">+</span>
                     </div>
-                    <div class="flex items-start">
-                        <span class="text-2xl font-black mr-3" style="color: var(--color-accent);">2.</span>
-                        <p class="text-gray-800"><span class="font-bold">Gamifikasi Kelas:</span> Menggunakan sistem poin dan lencana digital untuk meningkatkan motivasi dan keterlibatan.</p>
+                    <div id="content-a" class="accordion-content">
+                        <p class="font-bold text-lg mb-2" style="color: var(--color-primary);">Analisis Weakness & Problem:</p>
+                        <ul class="list-disc list-inside ml-4 text-gray-700 space-y-1">
+                        <li><strong>Weakness:</strong> Kelemahan dalam penyampaian materi atau struktur kegiatan belajar.</li>
+                        <li><strong>Problem:</strong> Kurikulum terlalu padat, waktu terbatas, atau metode yang kurang relevan.</li>
+                        </ul>
+                        <p class="font-bold text-lg mt-4 mb-2" style="color: var(--color-secondary);">Potensi Threats & Solusi Awal:</p>
+                        <ul class="list-disc list-inside ml-4 text-gray-700 space-y-1">
+                        <li><strong>Threats:</strong> Perubahan kebijakan mendadak atau keterbatasan sarana prasarana.</li>
+                        <li><strong>Solusi:</strong> Prioritas materi esensial dan adopsi strategi diferensiasi.</li>
+                        </ul>
                     </div>
-                    <div class="flex items-start">
-                        <span class="text-2xl font-black mr-3" style="color: var(--color-accent);">3.</span>
-                        <p class="text-gray-800"><span class="font-bold">Media Ajar Lokal:</span> Membuat video tutorial singkat (maks. 5 menit) menggunakan smartphone dan bahan ajar yang relevan dengan konteks sekolah.</p>
+                </div>
+                 <div data-problem-title="Keterlibatan Siswa" data-content-id="content-b">
+                    <div class="accordion-header p-4 font-extrabold flex justify-between items-center rounded-lg transition duration-300" style="background-color: var(--color-dark); color: var(--color-light);">
+                        <span>b. Keterlibatan Siswa</span>
+                        <span class="transform transition-transform duration-300 font-bold text-xl" style="color: var(--color-primary);">+</span>
+                    </div>
+                    <div id="content-b" class="accordion-content">
+                        <p class="font-bold text-lg mb-2" style="color: var(--color-primary);">Analisis Weakness & Problem:</p>
+                        <ul class="list-disc list-inside ml-4 text-gray-700 space-y-1">
+                        <li><strong>Weakness:</strong> Siswa pasif, kurang motivasi, atau hanya terlibat pada kelompok tertentu.</li>
+                        <li><strong>Problem:</strong> Kurangnya variasi aktivitas yang menstimulasi semua gaya belajar.</li>
+                        </ul>
+                        <p class="font-bold text-lg mt-4 mb-2" style="color: var(--color-secondary);">Potensi Threats & Solusi Awal:</p>
+                        <ul class="list-disc list-inside ml-4 text-gray-700 space-y-1">
+                        <li><strong>Threats:</strong> Gangguan sosial di kelas atau pengaruh negatif lingkungan luar.</li>
+                        <li><strong>Solusi:</strong> Integrasi elemen gamifikasi atau penggunaan alat interaktif digital.</li>
+                        </ul>
+                    </div>
+                </div>
+                <div data-problem-title="Penggunaan Media/Sumber Belajar" data-content-id="content-c">
+                    <div class="accordion-header p-4 font-extrabold flex justify-between items-center rounded-lg transition duration-300" style="background-color: var(--color-dark); color: var(--color-light);">
+                        <span>c. Penggunaan Media/Sumber Belajar</span>
+                        <span class="transform transition-transform duration-300 font-bold text-xl" style="color: var(--color-primary);">+</span>
+                    </div>
+                    <div id="content-c" class="accordion-content">
+                        <p class="font-bold text-lg mb-2" style="color: var(--color-primary);">Analisis Weakness & Problem:</p>
+                        <ul class="list-disc list-inside ml-4 text-gray-700 space-y-1">
+                        <li><strong>Weakness:</strong> Media yang digunakan sudah usang atau kurang menarik.</li>
+                        <li><strong>Problem:</strong> Keterbatasan akses internet atau peralatan teknologi.</li>
+                        </ul>
+                        <p class="font-bold text-lg mt-4 mb-2" style="color: var(--color-secondary);">Potensi Threats & Solusi Awal:</p>
+                        <ul class="list-disc list-inside ml-4 text-gray-700 space-y-1">
+                        <li><strong>Threats:</strong> Kerusakan alat atau biaya pengadaan media baru yang tinggi.</li>
+                        <li><strong>Solusi:</strong> Membuat media ajar sederhana berbasis bahan lokal.</li>
+                        </ul>
+                    </div>
+                </div>
+                 <div data-problem-title="Pencapaian Tujuan Pembelajaran" data-content-id="content-d">
+                    <div class="accordion-header p-4 font-extrabold flex justify-between items-center rounded-lg transition duration-300" style="background-color: var(--color-dark); color: var(--color-light);">
+                        <span>d. Pencapaian Tujuan Pembelajaran</span>
+                        <span class="transform transition-transform duration-300 font-bold text-xl" style="color: var(--color-primary);">+</span>
+                    </div>
+                    <div id="content-d" class="accordion-content">
+                        <p class="font-bold text-lg mb-2" style="color: var(--color-primary);">Analisis Weakness & Problem:</p>
+                        <ul class="list-disc list-inside ml-4 text-gray-700 space-y-1">
+                        <li><strong>Weakness:</strong> Perumusan tujuan yang kurang spesifik atau tidak terukur.</li>
+                        <li><strong>Problem:</strong> Tujuan pembelajaran yang tidak tercapai secara merata.</li>
+                        </ul>
+                        <p class="font-bold text-lg mt-4 mb-2" style="color: var(--color-secondary);">Potensi Threats & Solusi Awal:</p>
+                        <ul class="list-disc list-inside ml-4 text-gray-700 space-y-1">
+                        <li><strong>Threats:</strong> Penilaian yang bias.</li>
+                        <li><strong>Solusi:</strong> Gunakan kerangka SMART dalam merumuskan tujuan.</li>
+                        </ul>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
 
-    <!-- Slide 5: Penutupan/Terima Kasih (Dark Background) -->
-    <div class="slide-section slide-dark flex flex-col justify-center items-center" style="background-color: var(--color-dark); color: var(--color-light);">
-        <!-- DECORATIONS -->
-        <div class="shape shape-star-dark" style="background-color: var(--color-accent); top: 15%; left: 15%; width: 120px; height: 120px; opacity: 1;"></div>
-        <div class="shape" style="bottom: 10%; right: 10%; width: 50px; height: 50px; border-radius: 50%; background-color: var(--color-primary); opacity: 0.7;"></div>
-        <div class="shape" style="top: 5%; right: 40%; width: 10px; height: 100px; background-color: var(--color-secondary); transform: rotate(-20deg);"></div>
-        <div class="shape" style="bottom: 25%; left: 30%; width: 80px; height: 80px; border: 5px solid var(--color-accent); border-radius: 0.5rem; opacity: 0.4; transform: rotate(5deg);"></div>
-        
-        <!-- CONTENT -->
-        <div class="flex justify-center items-center space-x-6 mb-6 z-10 p-4 rounded-xl" style="background-color: var(--color-logo-bg-dark);">
-             <img src="https://admin.academy.timedoor.net/assets/img/logo/timedoor-academy-2022-black-green.png" 
-                 alt="Logo Timedoor Academy" 
-                 class="h-12 md:h-16 bg-white p-2 rounded-lg shadow-lg">
-            <!-- X removed -->
-            <img src="https://sudinpendidikanjb1.weebly.com/uploads/1/5/1/6/151627025/logo-sudin-2_orig.png" 
-                 alt="Logo Dinas Pendidikan Jakarta Barat" 
-                 class="h-12 md:h-16 bg-white p-2 rounded-lg shadow-lg">
+        <!-- Slide 4: Analisis Solusi (Light Background) -->
+        <div class="slide-section slide-light" style="background-color: var(--color-light);">
+            <!-- HEADER LOGOS -->
+             <div class="header-logo-container">
+                <div class="flex items-center space-x-4">
+                     <img src="https://admin.academy.timedoor.net/assets/img/logo/timedoor-academy-2022-black-green.png" 
+                         alt="Logo Timedoor Academy" 
+                         class="h-8 bg-gray-100 p-1 rounded-md">
+                    <!-- X removed -->
+                    <img src="https://sudinpendidikanjb1.weebly.com/uploads/1/5/1/6/151627025/logo-sudin-2_orig.png" 
+                         alt="Logo Dinas Pendidikan Jakarta Barat" 
+                         class="h-8 bg-gray-100 p-1 rounded-md">
+                </div>
+                <p class="text-sm font-semibold" style="color: var(--color-dark);">SOLUSI & AKSI</p>
+            </div>
+
+            <!-- DECORATIONS -->
+            <div class="shape shape-wave" style="border-color: var(--color-primary); bottom: 10%; right: 10%; transform: rotate(-25deg);"></div>
+            <div class="shape shape-star-dark" style="background-color: var(--color-primary); top: 5%; right: 5%; width: 60px; height: 60px; opacity: 0.5; animation: pulse-star 4s infinite alternate;"></div>
+            <div class="shape" style="top: 60%; left: 0%; width: 100px; height: 10px; background-color: var(--color-accent); transform: rotate(10deg); opacity: 0.6; animation: float 8s ease-in-out infinite;"></div>
+            <div class="shape" style="top: 25%; left: 50%; width: 50px; height: 50px; border: 3px solid var(--color-secondary); border-radius: 0.5rem; transform: rotate(-30deg); opacity: 0.8; animation: spin-slow 15s linear infinite alternate;"></div>
+            
+            <!-- CONTENT -->
+            <h2 class="text-4xl font-black mb-2 uppercase z-10" style="color: var(--color-dark); margin-top: 5rem;">
+                Analisis Solusi
+            </h2>
+            <h3 class="text-xl font-light mb-12 italic text-gray-600 z-10">
+                Strength, Opportunity & Action Plan
+            </h3>
+
+            <div class="grid md:grid-cols-2 gap-8 z-10 w-full">
+                <div class="p-6 rounded-xl border-4 border-dashed" style="border-color: var(--color-primary); background-color: var(--color-primary); color: white;">
+                    <h4 class="font-black text-3xl mb-4 uppercase" style="color: var(--color-accent);">Strength & Opportunity</h4>
+                    <ul class="list-disc list-inside ml-4 space-y-3 text-lg">
+                    <li><strong>Strength (Kekuatan):</strong> Keahlian unik guru, dukungan komunitas sekolah, kemampuan adaptasi teknologi.</li>
+                    <li><strong>Opportunity (Peluang):</strong> Memanfaatkan <span class="font-bold">platform belajar online gratis</span>, dukungan pemerintah daerah, tren pembelajaran berbasis proyek.</li>
+                    </ul>
+                </div>
+                
+                <div class="p-6 rounded-xl border-4 border-dashed" style="border-color: var(--color-secondary); background-color: white;">
+                    <h4 class="font-black text-3xl mb-4 uppercase" style="color: var(--color-secondary);">Action Plan</h4>
+                    <p class="mb-4 text-gray-700">Merumuskan solusi konkret yang memanfaatkan Strength untuk menangkap Opportunity dalam mengatasi Weakness.</p>
+                    <div class="space-y-3">
+                        <div class="flex items-start">
+                            <span class="text-2xl font-black mr-3" style="color: var(--color-accent);">1.</span>
+                            <p class="text-gray-800"><span class="font-bold">Diferensiasi Materi:</span> Membuat 3 versi tugas untuk mengakomodasi level siswa (Rendah, Sedang, Tinggi).</p>
+                        </div>
+                        <div class="flex items-start">
+                            <span class="text-2xl font-black mr-3" style="color: var(--color-accent);">2.</span>
+                            <p class="text-gray-800"><span class="font-bold">Gamifikasi Kelas:</span> Menggunakan sistem poin dan lencana digital untuk meningkatkan motivasi dan keterlibatan.</p>
+                        </div>
+                        <div class="flex items-start">
+                            <span class="text-2xl font-black mr-3" style="color: var(--color-accent);">3.</span>
+                            <p class="text-gray-800"><span class="font-bold">Media Ajar Lokal:</span> Membuat video tutorial singkat (maks. 5 menit) menggunakan smartphone dan bahan ajar yang relevan dengan konteks sekolah.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
 
-        <h2 class="text-6xl md:text-8xl font-black mb-4 z-10 uppercase tracking-wider" style="color: var(--color-secondary);">
-            TERIMA KASIH
-        </h2>
-        <p class="text-xl md:text-3xl text-center mb-8 z-10 font-light" style="color: var(--color-light);">
-            Sampai Jumpa di Open Class dan OJT Berikutnya!
-        </p>
-        <div class="text-sm text-gray-400 z-10 mt-6">
-            <p>Dinas Pendidikan Jakarta Barat & Timedoor Academy</p>
+        <!-- Slide 5: Penutupan/Terima Kasih (Dark Background) -->
+        <div class="slide-section slide-dark flex flex-col justify-center items-center" style="background-color: var(--color-dark); color: var(--color-light);">
+            <!-- DECORATIONS -->
+            <div class="shape shape-star-dark" style="background-color: var(--color-accent); top: 15%; left: 15%; width: 120px; height: 120px; opacity: 1;"></div>
+            <div class="shape" style="bottom: 10%; right: 10%; width: 50px; height: 50px; border-radius: 50%; background-color: var(--color-primary); opacity: 0.7; animation: float 5s ease-in-out infinite;"></div>
+            <div class="shape" style="top: 5%; right: 40%; width: 10px; height: 100px; background-color: var(--color-secondary); transform: rotate(-20deg); animation: float 9s ease-in-out infinite alternate;"></div>
+            <div class="shape" style="bottom: 25%; left: 30%; width: 80px; height: 80px; border: 5px solid var(--color-accent); border-radius: 0.5rem; opacity: 0.4; animation: spin-slow 22s linear infinite;"></div>
+            
+            <!-- CONTENT -->
+            <div class="flex justify-center items-center space-x-6 mb-6 z-10 p-4 rounded-xl" style="background-color: var(--color-logo-bg-dark);">
+                 <img src="https://admin.academy.timedoor.net/assets/img/logo/timedoor-academy-2022-black-green.png" 
+                     alt="Logo Timedoor Academy" 
+                     class="h-12 md:h-16 bg-white p-2 rounded-lg shadow-lg">
+                <!-- X removed -->
+                <img src="https://sudinpendidikanjb1.weebly.com/uploads/1/5/1/6/151627025/logo-sudin-2_orig.png" 
+                     alt="Logo Dinas Pendidikan Jakarta Barat" 
+                     class="h-12 md:h-16 bg-white p-2 rounded-lg shadow-lg">
+            </div>
+
+            <h2 class="text-6xl md:text-8xl font-black mb-4 z-10 uppercase tracking-wider" style="color: var(--color-secondary);">
+                TERIMA KASIH
+            </h2>
+            <p class="text-xl md:text-3xl text-center mb-8 z-10 font-light" style="color: var(--color-light);">
+                Sampai Jumpa di Open Class dan OJT Berikutnya!
+            </p>
+            <div class="text-sm text-gray-400 z-10 mt-6">
+                <p>Dinas Pendidikan Jakarta Barat & Timedoor Academy</p>
+            </div>
         </div>
-    </div>
+</div>
+
+<!-- Navigation Buttons -->
+<button id="prev-slide" class="slide-nav-btn" style="left: 1rem;">
+    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+    </svg>
+</button>
+<button id="next-slide" class="slide-nav-btn" style="right: 1rem;">
+    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+    </svg>
+</button>
 
     <script>
         // JavaScript untuk fungsionalitas Accordion (Topik Diskusi)
@@ -482,6 +543,59 @@
             if (firstHeader) {
                 firstHeader.click();
             }
+
+            // --- NEW: Slideshow functionality ---
+            const slideshowContainer = document.getElementById('slideshow-container');
+            const slides = document.querySelectorAll('.slide-section');
+            const prevBtn = document.getElementById('prev-slide');
+            const nextBtn = document.getElementById('next-slide');
+            let currentSlide = 0;
+            const totalSlides = slides.length;
+
+            function goToSlide(slideIndex) {
+                // Sembunyikan slide yang sedang aktif
+                slides[currentSlide].classList.remove('active-slide');
+                
+                // Tampilkan slide baru
+                slides[slideIndex].classList.add('active-slide');
+
+                currentSlide = slideIndex;
+                updateNavButtons();
+            }
+
+            function updateNavButtons() {
+                // Sembunyikan tombol 'prev' di slide pertama
+                prevBtn.style.display = currentSlide === 0 ? 'none' : 'flex';
+                // Sembunyikan tombol 'next' di slide terakhir
+                nextBtn.style.display = currentSlide === totalSlides - 1 ? 'none' : 'flex';
+            }
+
+            nextBtn.addEventListener('click', () => {
+                if (currentSlide < totalSlides - 1) {
+                    goToSlide(currentSlide + 1);
+                }
+            });
+
+            prevBtn.addEventListener('click', () => {
+                if (currentSlide > 0) {
+                    goToSlide(currentSlide - 1);
+                }
+            });
+
+            // Initial setup
+            updateNavButtons();
+            if (slides.length > 0) {
+                slides[0].classList.add('active-slide');
+            }
+
+            // Navigasi dengan tombol panah keyboard
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'ArrowRight') {
+                    nextBtn.click();
+                } else if (e.key === 'ArrowLeft') {
+                    prevBtn.click();
+                }
+            });
         });
     </script>
 </body>
